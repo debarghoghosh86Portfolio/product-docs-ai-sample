@@ -1,0 +1,10 @@
+rough notes from eng for the webhooks how-to:
+- settings > integrations > webhooks > add webhook
+- need admin or owner role
+- paste https URL (http not allowed), pick events: task.created task.updated task.completed project.archived
+- copy the secret shown once, store it safely
+- each POST has X-TaskFlow-Signature header = hex HMAC-SHA256(body, secret)
+- respond 2xx within 10s otherwise counts as failed
+- retries 5x exponential backoff (1m,5m,30m,2h,6h) then webhook disabled + email to admins
+- "send test event" button for testing
+- common probs: signature mismatch usually because body was parsed/re-serialized before hashing; use raw body. 410 Gone from your endpoint = we delete the webhook
